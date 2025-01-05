@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fitness Coach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            background: #f0f2f5;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+        }
+
+        .bot {
+            margin-right: auto;
+        }
+
+        .user {
+            margin-left: auto;
+        }
+
+        .message-content {
+            padding: 0.8rem;
+            border-radius: 1rem;
+        }
+
+        .bot .message-content {
+            background: #f0f2f5;
+        }
+
+        .user .message-content {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .option-button {
+            background: #f0f2f5;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .option-button:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .back-button {
+            background: #e0e0e0;
+            border: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .back-button:hover {
+            background: #d0d0d0;
+        }
+
+        .workout-plan {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .workout-plan h3 {
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        .exercise-list {
+            list-style: none;
+        }
+
+        .exercise-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .exercise-list li:before {
+            content: "•";
+            color: #4CAF50;
+            position: absolute;
+            left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            AI Fitness Coach
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Welcome to your AI Fitness Coach! Choose a category to get started:
+                </div>
+            </div>
+        </div>
+        <div class="options-container" id="optionsContainer">
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const optionsContainer = document.getElementById('optionsContainer');
+
+        const menuStructure = {
+            main: {
+                title: "Main Menu",
+                options: [
+                    { id: "workouts", text: "Workout Plans" },
+                    { id: "nutrition", text: "Nutrition Advice" },
+                    { id: "goals", text: "Fitness Goals" }
+                ]
+            },
+            workouts: {
+                title: "Workout Plans",
+                options: [
+                    { id: "beginner", text: "Beginner Workout" },
+                    { id: "intermediate", text: "Intermediate Workout" },
+                    { id: "advanced", text: "Advanced Workout" },
+                    { id: "home", text: "Home Workout" }
+                ]
+            },
+            nutrition: {
+                title: "Nutrition Advice",
+                options: [
+                    { id: "mealplan", text: "Meal Plans" },
+                    { id: "recipes", text: "Healthy Recipes" },
+                    { id: "supplements", text: "Supplement Guide" }
+                ]
+            },
+            goals: {
+                title: "Fitness Goals",
+                options: [
+                    { id: "weightloss", text: "Weight Loss" },
+                    { id: "muscle", text: "Muscle Gain" },
+                    { id: "endurance", text: "Endurance" }
+                ]
+            }
+        };
+
+        const responses = {
+            beginner: {
+                title: "Beginner Workout Plan",
+                content: `
+                    <div class="workout-plan">
+                        <h3>Full Body Workout (3x per week)</h3>
+                        <ul class="exercise-list">
+                            <li>Bodyweight Squats: 3 sets of 10 reps</li>
+                            <li>Push-ups (modified if needed): 3 sets of 8 reps</li>
+                            <li>Walking Lunges: 2 sets of 10 per leg</li>
+                            <li>Plank Hold: 3 sets of 20 seconds</li>
+                            <li>Bird Dogs: 2 sets of 8 per side</li>
+                            <li>Rest 60-90 seconds between sets</li>
+                        </ul>
+                    </div>
+                `
+            },
+            mealplan: {
+                title: "Healthy Meal Plan",
+                content: `
+                    <div class="workout-plan">
+                        <h3>Daily Meal Plan</h3>
+                        <ul class="exercise-list">
+                            <li>Breakfast: Oatmeal with berries and nuts</li>
+                            <li>Snack: Greek yogurt with honey</li>
+                            <li>Lunch: Grilled chicken salad with quinoa</li>
+                            <li>Snack: Apple with almond butter</li>
+                            <li>Dinner: Baked salmon with vegetables</li>
+                            <li>Remember to drink water throughout the day!</li>
+                        </ul>
+                    </div>
+                `
+            },
+            weightloss: {
+                title: "Weight Loss Guide",
+                content: `
+                    <div class="workout-plan">
+                        <h3>Weight Loss Tips</h3>
+                        <ul class="exercise-list">
+                            <li>Create a caloric deficit of 500 calories/day</li>
+                            <li>Include 30 minutes of cardio 3-4 times/week</li>
+                            <li>Strength train 2-3 times/week</li>
+                            <li>Eat protein with every meal</li>
+                            <li>Get 7-8 hours of sleep</li>
+                            <li>Track your progress weekly</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        let currentMenu = 'main';
+
+        function showOptions(menuId) {
+            const menu = menuStructure[menuId];
+            optionsContainer.innerHTML = '';
+            
+            if (menuId !== 'main') {
+                const backButton = document.createElement('button');
+                backButton.className = 'back-button';
+                backButton.textContent = '← Back to Main Menu';
+                backButton.onclick = () => showOptions('main');
+                optionsContainer.appendChild(backButton);
+            }
+
+            menu.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option.text;
+                button.onclick = () => handleOption(option.id);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function addMessage(text, sender, isHTML = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            if (isHTML) {
+                content.innerHTML = text;
+            } else {
+                content.textContent = text;
+            }
+            
+            messageDiv.appendChild(content);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleOption(optionId) {
+            if (menuStructure[optionId]) {
+                currentMenu = optionId;
+                addMessage(`You selected: ${menuStructure[optionId].title}`, 'user');
+                addMessage(`Here are your options for ${menuStructure[optionId].title}:`, 'bot');
+                showOptions(optionId);
+            } else if (responses[optionId]) {
+                addMessage(`You selected: ${responses[optionId].title}`, 'user');
+                addMessage(responses[optionId].content, 'bot', true);
+                showOptions(currentMenu);
+            } else {
+                addMessage(`You selected: ${optionId}`, 'user');
+                addMessage("I'm still learning about this topic. Please try another option!", 'bot');
+                showOptions(currentMenu);
+            }
+        }
+
+        // Initialize with main menu
+        showOptions('main');
+    </script>
+</body>
+</html>
