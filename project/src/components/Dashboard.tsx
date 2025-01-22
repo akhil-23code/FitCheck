@@ -6,8 +6,12 @@ import ActivityCard from './ActivityCard';
 import BMICalculator from './BMICalculator'; // Import the BMI Calculator
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
+  const handleButtonClick = () => {
+    window.location.href = 'https://fastidious-selkie-83bafe.netlify.app/'; // Change to the desired URL
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 relative">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl md:text-6xl font-mono text-blue-600">
@@ -34,6 +38,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           ))}
         </div>
       </div>
+      {/* Stylish Button in Bottom-Right Corner */}
+      <button
+        onClick={handleButtonClick}
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
+        style={{ fontSize: '1.2rem' }} // Customize size here
+      >
+        ChatBot {/* Customize content here */}
+      </button>
     </div>
   );
 };
