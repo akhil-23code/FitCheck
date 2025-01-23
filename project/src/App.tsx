@@ -2,10 +2,23 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
-import CourseMap from './components/CourseMap';
+import CourseMap from './components/MapComponent';
 import WeightGain from './components/WeightGain';
 import StayFit from './components/StayFit';
 import WeightLoss from './components/WeightLoss';
+import GymLocator from "./components/MapComponent";
+import TravelFit from './components/TravelFit';
+
+const App1: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/gyms" element={<GymLocator />} />
+        {/* Other routes */}
+      </Routes>
+    </Router>
+  );
+};
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,6 +61,10 @@ function App() {
             <Route
             path="/weight-loss"
             element={<WeightLoss />}
+            />
+            <Route
+            path="/travel-fit"
+            element={<TravelFit />}
             />
           </>
         )}
